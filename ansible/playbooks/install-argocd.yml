@@ -12,12 +12,13 @@
     - name: Create argocd namespace
       command: k3s kubectl create namespace argocd
       register: ns
-      failed_when: ns.rc != 0 and ("already exists" not in ns.stderr)
+      failed_when: ns.rc != 0 and ("already exists" not in ns.stderr | default(''))
       changed_when: ns.rc == 0
 
     - name: Install Argo CD manifests
       command: >
-        k3s kubectl apply -n argocd
+        k3s kubectl apply --server-side --force-conflicts
+        -n argocd
         -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
 
     - name: Wait for Argo CD server deployment
