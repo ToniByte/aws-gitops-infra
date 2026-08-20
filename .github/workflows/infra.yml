@@ -103,6 +103,11 @@ jobs:
         run: |
           ansible-playbook -i ansible/inventory/hosts.ini ansible/playbooks/install-argocd.yml
 
+      - name: Install cert-manager
+        working-directory: .
+        run: |
+          ansible-playbook -i ansible/inventory/hosts.ini ansible/playbooks/install-cert-manager.yml
+
       - name: Summary
         working-directory: .
         run: |
