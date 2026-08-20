@@ -56,11 +56,36 @@ jobs:
       - name: Setup SSH key
         working-directory: .
         run: |
-          mkdir -p ~/.ssh
-          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/tonibyte-key.pem
-          chmod 400 ~/.ssh/tonibyte-key.pem
-          ssh-keyscan -H "${{ steps.tf.outputs.public_ip }}" >> ~/.ssh/known_hosts
+          set -euo pipefail
 
+          mkdir -p ~/.ssh
+          chmod 700 ~/.ssh
+
+          # write key
+          printf '%s\n' "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/tonibyte-key.pem
+          chmod 400 ~/.ssh/tonibyte-key.pem
+
+          echo "=== Key header ==="
+          head -n 1 ~/.ssh/tonibyte-key.pem
+
+          echo "=== Validate private key ==="
+          ssh-keygen -y -f ~/.ssh/tonibyte-key.pem >/dev/null
+          echo "Private key OK"
+
+          echo "=== Scanning host key for ${{ steps.tf.outputs.public_ip }} ==="
+          for i in $(seq 1 30); do
+            if ssh-keyscan -T 5 -H "${{ steps.tf.outputs.public_ip }}" >> ~/.ssh/known_hosts 2>/tmp/keyscan.err; then
+              echo "Host key OK"
+              exit 0
+            fi
+            echo "Attempt $i failed"
+            cat /tmp/keyscan.err || true
+            sleep 5
+          done
+
+          echo "ssh-keyscan failed"
+          exit 1
+          
       - name: Install Ansible
         working-directory: .
         run: |
