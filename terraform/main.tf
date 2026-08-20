@@ -6,7 +6,7 @@ terraform {
     }
   }
   backend "s3" {
-    bucket = "tonibyte-tfstate"
+    bucket = "tonibyte-tfstate-089244386830-eu-central-1-an"
     key    = "gitops/terraform.tfstate"
     region = "eu-central-1"
   }
