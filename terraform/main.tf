@@ -17,8 +17,9 @@ provider "aws" {
 }
 
 variable "ssh_cidr" {
-  description = "159.26.107.94"
+  description = "ip"
   type        = string
+  default     = "0.0.0.0/0"
 }
 
 variable "key_name" {
