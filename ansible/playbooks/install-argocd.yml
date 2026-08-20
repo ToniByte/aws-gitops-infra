@@ -1,0 +1,63 @@
+---
+- name: Install Argo CD and connect GitOps repo
+  hosts: k3s
+  become: true
+
+  vars:
+    gitops_repo: "https://github.com/ToniByte/k8s-helm-flask-gitops.git"
+    app_name: "flask-app"
+    app_path: "charts/flask-app"
+
+  tasks:
+    - name: Create argocd namespace
+      command: k3s kubectl create namespace argocd
+      register: ns
+      failed_when: ns.rc != 0 and ("already exists" not in ns.stderr)
+      changed_when: ns.rc == 0
+
+    - name: Install Argo CD manifests
+      command: >
+        k3s kubectl apply -n argocd
+        -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
+
+    - name: Wait for Argo CD server deployment
+      command: >
+        k3s kubectl -n argocd rollout status deployment/argocd-server --timeout=300s
+      changed_when: false
+
+    - name: Create Argo CD Application manifest
+      copy:
+        dest: /tmp/argocd-app.yaml
+        content: |
+          apiVersion: argoproj.io/v1alpha1
+          kind: Application
+          metadata:
+            name: {{ app_name }}
+            namespace: argocd
+          spec:
+            project: default
+            source:
+              repoURL: {{ gitops_repo }}
+              targetRevision: main
+              path: {{ app_path }}
+            destination:
+              server: https://kubernetes.default.svc
+              namespace: default
+            syncPolicy:
+              automated:
+                prune: true
+                selfHeal: true
+              syncOptions:
+                - CreateNamespace=true
+
+    - name: Apply Argo CD Application
+      command: k3s kubectl apply -f /tmp/argocd-app.yaml
+
+    - name: Show applications
+      command: k3s kubectl get applications -n argocd
+      register: apps
+      changed_when: false
+
+    - name: Print applications
+      debug:
+        var: apps.stdout

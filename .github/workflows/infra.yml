@@ -1,0 +1,111 @@
+name: Infra
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ "main" ]
+    paths:
+      - "terraform/**"
+      - "ansible/**"
+      - ".github/workflows/infra.yml"
+
+env:
+  AWS_REGION: eu-central-1
+  TF_WORKING_DIR: terraform
+
+jobs:
+  infra:
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: ${{ env.TF_WORKING_DIR }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_wrapper: false
+
+      - name: Terraform Init
+        run: terraform init
+
+      - name: Terraform Apply
+        run: |
+          terraform apply -auto-approve \
+            -var="ssh_cidr=${{ secrets.SSH_CIDR }}" \
+            -var="key_name=tonibyte-key"
+
+      - name: Get public IP
+        id: tf
+        run: |
+          IP=$(terraform output -raw public_ip)
+          echo "public_ip=$IP" >> "$GITHUB_OUTPUT"
+          echo "EC2 public IP: $IP"
+
+      - name: Setup SSH key
+        working-directory: .
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/tonibyte-key.pem
+          chmod 400 ~/.ssh/tonibyte-key.pem
+          ssh-keyscan -H "${{ steps.tf.outputs.public_ip }}" >> ~/.ssh/known_hosts
+
+      - name: Install Ansible
+        working-directory: .
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y ansible
+
+      - name: Generate inventory
+        working-directory: .
+        run: |
+          mkdir -p ansible/inventory
+          cat > ansible/inventory/hosts.ini << EOF
+          [k3s]
+          gitops ansible_host=${{ steps.tf.outputs.public_ip }} ansible_user=ubuntu ansible_ssh_private_key_file=~/.ssh/tonibyte-key.pem
+
+          [k3s:vars]
+          ansible_python_interpreter=/usr/bin/python3
+          ansible_ssh_common_args='-o StrictHostKeyChecking=no'
+          EOF
+
+      - name: Wait for SSH
+        working-directory: .
+        run: |
+          for i in $(seq 1 30); do
+            if ansible -i ansible/inventory/hosts.ini k3s -m ping; then
+              exit 0
+            fi
+            echo "SSH not ready, retry..."
+            sleep 10
+          done
+          echo "SSH failed"
+          exit 1
+
+      - name: Bootstrap k3s
+        working-directory: .
+        run: |
+          ansible-playbook -i ansible/inventory/hosts.ini ansible/playbooks/bootstrap-k3s.yml
+
+      - name: Install Argo CD and app
+        working-directory: .
+        run: |
+          ansible-playbook -i ansible/inventory/hosts.ini ansible/playbooks/install-argocd.yml
+
+      - name: Summary
+        working-directory: .
+        run: |
+          echo "Infrastructure ready"
+          echo "Public IP: ${{ steps.tf.outputs.public_ip }}"
+          echo "Next: check Argo CD app flask-app and GHCR image tag"
