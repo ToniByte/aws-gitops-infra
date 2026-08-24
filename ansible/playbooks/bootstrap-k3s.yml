@@ -1,0 +1,75 @@
+---
+- name: Bootstrap k3s on AWS EC2
+  hosts: k3s
+  become: true
+
+  vars:
+    k3s_version: "v1.31.4+k3s1"
+
+  tasks:
+    - name: Wait for system to be ready
+      wait_for_connection:
+        timeout: 120
+
+    - name: Update apt cache
+      apt:
+        update_cache: true
+        cache_valid_time: 3600
+
+    - name: Install required packages
+      apt:
+        name:
+          - curl
+          - apt-transport-https
+          - ca-certificates
+        state: present
+
+    - name: Check if k3s already installed
+      command: k3s --version
+      register: k3s_check
+      failed_when: false
+      changed_when: false
+
+    - name: Install k3s
+      shell: curl -sfL https://get.k3s.io | INSTALL_K3S_VERSION={{ k3s_version }} sh -
+      args:
+        creates: /usr/local/bin/k3s
+      when: k3s_check.rc != 0
+
+    - name: Ensure k3s service is enabled and started
+      service:
+        name: k3s
+        state: started
+        enabled: true
+
+    - name: Wait until k3s API is up
+      wait_for:
+        host: 127.0.0.1
+        port: 6443
+        timeout: 180
+
+    - name: Create kubeconfig directory for ubuntu
+      file:
+        path: /home/ubuntu/.kube
+        state: directory
+        owner: ubuntu
+        group: ubuntu
+        mode: "0755"
+
+    - name: Copy kubeconfig for ubuntu user
+      copy:
+        src: /etc/rancher/k3s/k3s.yaml
+        dest: /home/ubuntu/.kube/config
+        remote_src: true
+        owner: ubuntu
+        group: ubuntu
+        mode: "0600"
+
+    - name: Show node status
+      command: k3s kubectl get nodes
+      register: nodes
+      changed_when: false
+
+    - name: Print nodes
+      debug:
+        var: nodes.stdout
