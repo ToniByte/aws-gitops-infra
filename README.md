@@ -1,4 +1,14 @@
+T O N I B Y T E
+
 # AWS GitOps Infrastructure
+
+[![AWS](https://img.shields.io/badge/AWS-Cloud-orange?logo=amazon-aws)](https://aws.amazon.com/)
+[![Terraform](https://img.shields.io/badge/Terraform-IaC-purple?logo=terraform)](https://www.terraform.io/)
+[![Kubernetes](https://img.shields.io/badge/Kubernetes-k3s-blue?logo=kubernetes)](https://kubernetes.io/)
+[![Argo CD](https://img.shields.io/badge/Argo%20CD-GitOps-orange?logo=argo)](https://argo-cd.readthedocs.io/)
+[![GitHub Actions](https://img.shields.io/badge/GitHub%20Actions-CI%2FCD-blue?logo=githubactions)](https://github.com/features/actions)
+[![PostgreSQL](https://img.shields.io/badge/PostgreSQL-16-blue?logo=postgresql)](https://www.postgresql.org/)
+[![Let's Encrypt](https://img.shields.io/badge/Let's%20Encrypt-TLS-red?logo=letsencrypt)](https://letsencrypt.org/)
 
 **Production-style DevOps project for automated AWS infrastructure and GitOps delivery.**
 
