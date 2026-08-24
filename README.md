@@ -1,6 +1,10 @@
-T O N I B Y T E
+<div align="center">
+
+T O N I B Y T E 
 
 # AWS GitOps Infrastructure
+
+**Production-style DevOps project for automated AWS infrastructure and GitOps delivery.**
 
 [![AWS](https://img.shields.io/badge/AWS-Cloud-orange?logo=amazon-aws)](https://aws.amazon.com/)
 [![Terraform](https://img.shields.io/badge/Terraform-IaC-purple?logo=terraform)](https://www.terraform.io/)
@@ -10,11 +14,9 @@ T O N I B Y T E
 [![PostgreSQL](https://img.shields.io/badge/PostgreSQL-16-blue?logo=postgresql)](https://www.postgresql.org/)
 [![Let's Encrypt](https://img.shields.io/badge/Let's%20Encrypt-TLS-red?logo=letsencrypt)](https://letsencrypt.org/)
 
-**Production-style DevOps project for automated AWS infrastructure and GitOps delivery.**
-
-**Tech Stack:**
 ☁️ **AWS** · 🏗️ **Terraform** · ⚙️ **Ansible** · 🔄 **GitHub Actions** · ☸️ **k3s** · 🚀 **Argo CD** · 🗄️ **RDS PostgreSQL 16** · 🔐 **AWS Secrets Manager** · 🔒 **cert-manager** · 🌐 **Let's Encrypt** · 🕸️ **VPC / NAT Gateway / Internet Gateway / Security Groups / Elastic IP**
 
+</div>
 
 ## Architecture
 
