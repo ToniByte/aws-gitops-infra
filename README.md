@@ -238,4 +238,3 @@ Learning / portfolio project — actively refined.
 **ToniByte**
 
 Built for learning, practice, and demonstrating practical DevOps skills on AWS.
->>>>>>> 0f5e9eb (refactor(terraform): modular layout with VPC, RDS and Secrets Manager)
