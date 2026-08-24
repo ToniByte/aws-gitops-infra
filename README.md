@@ -11,7 +11,6 @@ T O N I B Y T E
 [![Kubernetes](https://img.shields.io/badge/Kubernetes-k3s-blue?logo=kubernetes)](https://kubernetes.io/)
 [![Argo CD](https://img.shields.io/badge/Argo%20CD-GitOps-orange?logo=argo)](https://argo-cd.readthedocs.io/)
 [![GitHub Actions](https://img.shields.io/badge/GitHub%20Actions-CI%2FCD-blue?logo=githubactions)](https://github.com/features/actions)
-[![PostgreSQL](https://img.shields.io/badge/PostgreSQL-16-blue?logo=postgresql)](https://www.postgresql.org/)
 [![Let's Encrypt](https://img.shields.io/badge/Let's%20Encrypt-TLS-red?logo=letsencrypt)](https://letsencrypt.org/)
 
 ☁️ **AWS** · 🏗️ **Terraform** · ⚙️ **Ansible** · 🔄 **GitHub Actions** · ☸️ **k3s** · 🚀 **Argo CD** · 🗄️ **RDS PostgreSQL 16** · 🔐 **AWS Secrets Manager** · 🔒 **cert-manager** · 🌐 **Let's Encrypt** · 🕸️ **VPC / NAT Gateway / Internet Gateway / Security Groups / Elastic IP**
