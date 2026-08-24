@@ -1,92 +1,14 @@
 # AWS GitOps Infrastructure
 
-<<<<<<< HEAD
-A hands-on **DevOps portfolio project** for learning how to build and automate cloud infrastructure on AWS.
+**Production-style DevOps project for automated AWS infrastructure and GitOps delivery.**
 
-The project combines **Terraform, Ansible, GitHub Actions, Kubernetes and Argo CD** into one automated workflow.
-=======
-Production-style **DevOps portfolio project**: automated AWS infrastructure and GitOps delivery on Kubernetes.
+**Tech Stack:**
+☁️ **AWS** · 🏗️ **Terraform** · ⚙️ **Ansible** · 🔄 **GitHub Actions** · ☸️ **k3s** · 🚀 **Argo CD** · 🗄️ **RDS PostgreSQL 16** · 🔐 **AWS Secrets Manager** · 🔒 **cert-manager** · 🌐 **Let's Encrypt** · 🕸️ **VPC / NAT Gateway / Internet Gateway / Security Groups / Elastic IP**
 
-The stack combines **Terraform (modular IaC), Ansible, GitHub Actions, k3s, Argo CD and AWS managed services** into one end-to-end workflow.
-
----
->>>>>>> 0f5e9eb (refactor(terraform): modular layout with VPC, RDS and Secrets Manager)
 
 ## Architecture
 
 ```text
-GitHub
-   |
-   v
-GitHub Actions
-   |
-<<<<<<< HEAD
-   +--> Terraform --> AWS
-   |                  |
-   |                  +--> EC2
-   |                  +--> RDS PostgreSQL
-   |                  +--> Secrets Manager
-   |
-   +--> Ansible --> k3s
-                       |
-                       +--> Argo CD
-                       +--> cert-manager
-```
-
-## Technologies
-
-* **AWS** — cloud infrastructure
-* **Terraform** — Infrastructure as Code
-* **Ansible** — server configuration
-* **GitHub Actions** — CI/CD automation
-* **k3s** — Kubernetes cluster
-* **Argo CD** — GitOps
-* **RDS PostgreSQL** — managed database
-* **Secrets Manager** — database credentials
-
-## How It Works
-
-1. Terraform creates the AWS infrastructure.
-2. Ansible configures the EC2 server.
-3. k3s provides the Kubernetes cluster.
-4. Argo CD manages Kubernetes applications using Git.
-5. GitHub Actions automates the whole process.
-
-## Project Structure
-
-```text
-.github/workflows/   # GitHub Actions
-terraform/           # AWS infrastructure
-ansible/             # Server and Kubernetes setup
-```
-
-## Learning Goals
-
-This project is created as part of my **DevOps learning and portfolio journey**.
-
-The main goals are to practice:
-
-* Infrastructure as Code
-* AWS
-* Linux
-* CI/CD
-* Kubernetes
-* GitOps
-* Automation
-* Secrets management
-
-## Status
-
-**Learning project — continuously improving**
-
-Planned improvements include monitoring, security scanning, AWS OIDC, better networking and a complete application deployment through Argo CD.
- 
-## Author
-
-**ToniByte**
-
-Built for learning, practice and demonstrating practical DevOps skills.
-=======
    +--> Terraform (modules)
    |         |
    |         +--> VPC (public/private subnets, IGW, NAT, multi-AZ)
@@ -101,7 +23,6 @@ Built for learning, practice and demonstrating practical DevOps skills.
              +--> Argo CD
              +--> cert-manager + Let's Encrypt
 
-             # Network design
 ```
 
 # Network design
@@ -150,7 +71,7 @@ terraform/
 
 * Clear separation: network / security / compute / database / secrets
 * Reusable and review-friendly
-* Root shows architecture in ~40 lines
+* Root shows architecture
 * Suitable for multi-env extension later (dev / prod)
 
 # State
@@ -275,7 +196,7 @@ ansible-playbook -i ansible/inventory/hosts.ini ansible/playbooks/install-argocd
 ansible-playbook -i ansible/inventory/hosts.ini ansible/playbooks/install-cert-manager.yml
 ```
 
-# Learning goals / portfolio highlights
+# Goals
 
 | Skill                  | What was implemented                                   |
 | ---------------------- | ------------------------------------------------------ |
@@ -300,14 +221,6 @@ Learning / portfolio project — actively refined.
 * [x] Multi-AZ subnets for RDS compliance
 * [x] EC2 + EIP in public subnet
 * [x] RDS in private subnets + Secrets Manager
-
-## Planned
-
-* [ ] AWS OIDC for GitHub Actions (no long-lived keys)
-* [ ] Monitoring (Prometheus / Grafana or CloudWatch)
-* [ ] Security scanning in CI
-* [ ] Full app deploy via Argo CD + External Secrets from Secrets Manager
-* [ ] Optional second environment (staging)
 
 # Author
 
