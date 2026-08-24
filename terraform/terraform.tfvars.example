@@ -1,0 +1,13 @@
+aws_region          = "eu-central-1"
+project_name        = "tonibyte-gitops"
+vpc_cidr            = "10.0.0.0/16"
+public_subnet_cidr  = "10.0.1.0/24"
+private_subnet_cidr = "10.0.11.0/24"
+availability_zone   = "eu-central-1a"
+ssh_cidr            = "159.26.107.94/32"
+key_name            = "tonibyte-key"
+instance_type       = "t3.small"
+root_volume_size    = 20
+db_name             = "tonibyte"
+db_username         = "tonibyte"
+db_instance_class   = "db.t3.micro"
